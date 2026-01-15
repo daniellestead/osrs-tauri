@@ -41,7 +41,7 @@ jobs:
                   node-version: 20
 
             - name: Install frontend dependencies
-              run: cd src && npm install
+              run: cd src && npm install --legacy-peer-deps
 
             - name: Build the app
               uses: tauri-apps/tauri-action@v0
