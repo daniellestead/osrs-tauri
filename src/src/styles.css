@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@plugin './lib/heroui/hero.ts';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+	
+	body {
+		margin: 0;
+		background-color: #09090b;
+		color: rgba(255, 255, 255, 0.9);
+		font-family: system-ui, -apple-system, sans-serif;
+	}
+	
+	#root {
+		min-height: 100vh;
+	}
+}
+
+@theme {
+	--font-sans:
+		var(--font-brand), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+	--color-danger: #de3d18;
+
+	--background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+	--background-image-gradient-conic: conic-gradient(
+		from 180deg at 50% 50%,
+		var(--tw-gradient-stops)
+	);
+
+	--animate-blink: blink 1s linear infinite;
+
+	@keyframes blink {
+		50% {
+			border-color: #a1a6a3;
+		}
+	}
+}
