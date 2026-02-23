@@ -1,3 +1,9 @@
+export interface Skill {
+  name: string
+  level: number
+  xp: number
+}
+
 export const SKILLS = [
   'Attack', 'Strength', 'Defence', 'Ranged', 'Prayer', 'Magic',
   'Runecraft', 'Construction', 'Hitpoints', 'Agility', 'Herblore',

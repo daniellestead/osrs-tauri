@@ -3,14 +3,17 @@ import { PageLayout } from '../layout'
 import { Card } from '../../../components/card'
 import { Input } from '../../../components/input'
 import { Button } from '../../../components/button'
-import { GoalCard } from "../goal-card"
-import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import { GoalCard } from '../goal-card'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import type { Item } from './types'
+import { UseItemSearch } from './use-item-search'
 
 interface DropGoal {
   id: string
   itemName: string
   targetDrops: number
   currentDrops: number
+  itemIcon?: string
 }
 
 export function Drops() {
@@ -18,6 +21,9 @@ export function Drops() {
   const [showForm, setShowForm] = useState(false)
   const [itemName, setItemName] = useState('')
   const [targetDrops, setTargetDrops] = useState('1')
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+  const [showResults, setShowResults] = useState(false)
+  const { items, loading, error, searchItems } = UseItemSearch()
 
   useEffect(() => {
     const savedGoals = localStorage.getItem('dropGoals')
@@ -37,15 +43,36 @@ export function Drops() {
 
     const newGoal: DropGoal = {
       id: Date.now().toString(),
-      itemName: itemName.trim(),
+      itemName: selectedItem?.name || itemName.trim(),
       targetDrops: Number.parseInt(targetDrops) || 1,
       currentDrops: 0,
+      itemIcon: selectedItem?.icon,
     }
 
     setGoals([...goals, newGoal])
     setItemName('')
     setTargetDrops('1')
+    setSelectedItem(null)
+    setShowResults(false)
     setShowForm(false)
+  }
+
+  const handleItemSearch = (value: string) => {
+    setItemName(value)
+    setSelectedItem(null)
+    
+    if (value.length >= 1) {
+      searchItems(value.toLowerCase())
+      setShowResults(true)
+    } else {
+      setShowResults(false)
+    }
+  }
+
+  const selectItem = (item: Item) => {
+    setItemName(item.name)
+    setSelectedItem(item)
+    setShowResults(false)
   }
 
   const deleteGoal = (id: string) => {
@@ -87,36 +114,68 @@ export function Drops() {
       }}
     >
       {showForm && (
-        <Card className="flex flex-row items-end gap-3">
-          <Input
-            type="text"
-            label="Item name"
-            placeholder="Enter item name..."
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-            className="flex-1"
-          />
+        <div className="relative">
+          <Card className="flex flex-col gap-3">
+            <div className="flex flex-row items-end gap-3">
+              <div className="flex-1 relative">
+                <Input
+                  type="text"
+                  label="Item name"
+                  placeholder="Enter item name..."
+                  value={itemName}
+                  onChange={(e) => handleItemSearch(e.target.value)}
+                />
+                
+                {showResults && (() => {
+                  const filteredItems = items.filter(item => 
+                    item.name.toLowerCase().includes(itemName.toLowerCase())
+                  )
+                  
+                  return filteredItems.length > 0 && (
+                    <div className="absolute z-50 w-full mt-1 bg-zinc-900 border border-zinc-700 rounded-lg max-h-60 overflow-y-auto shadow-xl">
+                      {loading && <div className="p-3 text-zinc-400 text-sm">Loading...</div>}
+                      {error && <div className="p-3 text-red-400 text-sm">{error}</div>}
+                      {filteredItems.map((item) => (
+                        <button
+                          key={item.id}
+                          className="w-full flex items-center gap-2 p-2 hover:bg-zinc-800 text-left transition-colors"
+                          onClick={() => selectItem(item)}
+                          type="button"
+                        >
+                          <img src={item.icon} alt={item.name} className="w-8 h-8" />
+                          <div className="flex flex-col">
+                            <span className="text-white text-sm">{item.name}</span>
+                            <span className="text-zinc-400 text-xs">{item.description}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )
+                })()}
+            </div>
 
-          <Input
-            type="number"
-            label="Target drops"
-            placeholder="1"
-            min={1}
-            value={targetDrops}
-            onChange={(e) => setTargetDrops(e.target.value)}
-            className="w-32"
-          />
+            <Input
+              type="number"
+              label="Target drops"
+              placeholder="1"
+              min={1}
+              value={targetDrops}
+              onChange={(e) => setTargetDrops(e.target.value)}
+              className="w-32"
+            />
 
-          <Button
-            onPress={addGoal}
-            className="text-white bg-purple-500 hover:bg-purple-700 h-10"
-          >
-            Add goal
-          </Button>
-        </Card>
+            <Button
+              onPress={addGoal}
+              className="text-white bg-purple-500 hover:bg-purple-700 h-10"
+            >
+              Add goal
+            </Button>
+          </div>
+          </Card>
+        </div>
       )}
 
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3">
+      <div className="grid grid-cols-3 gap-3">
         {goals.map((goal) => {
           const progress = calculateProgress(goal.currentDrops, goal.targetDrops)
           const isComplete = goal.currentDrops >= goal.targetDrops
@@ -126,6 +185,7 @@ export function Drops() {
               key={goal.id}
               id={goal.id}
               title={goal.itemName}
+              iconPath={goal.itemIcon}
               currentValue={goal.currentDrops}
               targetValue={goal.targetDrops}
               progress={progress}

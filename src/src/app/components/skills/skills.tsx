@@ -5,7 +5,7 @@ import { Card } from '../../../components/card'
 import { Input } from '../../../components/input'
 import { Select, SelectItem } from '@heroui/react'
 import { Button } from '../../../components/button'
-import { SKILLS, XP_TABLE } from "./types"
+import { type Skill, SKILLS, XP_TABLE } from "./types"
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 
 interface SkillGoal {
@@ -14,12 +14,6 @@ interface SkillGoal {
   targetLevel: number
   currentLevel: number
   currentXp: number
-}
-
-interface Skill {
-  name: string
-  level: number
-  xp: number
 }
 
 export function Skills() {
