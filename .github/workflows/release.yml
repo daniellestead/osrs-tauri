@@ -38,7 +38,7 @@ jobs:
               run: cd src && npm install --legacy-peer-deps
 
             - name: Build the app
-              uses: tauri-apps/tauri-action@v0
+              uses: tauri-apps/tauri-action@v0.5
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -50,3 +50,4 @@ jobs:
                   releaseDraft: true
                   prerelease: false
                   updaterJsonPreferNsis: true
+                  updaterJsonKeepUniversal: true

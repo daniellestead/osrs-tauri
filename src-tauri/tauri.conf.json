@@ -32,14 +32,19 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "createUpdaterArtifacts": true
   },
   "plugins": {
     "updater": {
+      "createUpdaterArtifacts": true,
       "endpoints": [
         "https://github.com/daniellestead/osrs-tauri/releases/latest/download/latest.json"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlFQTk0QzE1QTI2QjQ2RDkKUldUWlJtdWlGVXlwbnZTQytDQWpFczNEVEtUNncxWDJ1Q2pDNm5LUDdkV1ZNWWc1WmJleWJMa0oK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDIxQUJCRkM4MkVCRDVFREIKUldUYlhyMHV5TCtySVpBZWhmN1hVd1lYQmcrQ1BHR1AvUXFIRmtDQzFQMXphdWNwWG9nNUVEM1AK",
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }
