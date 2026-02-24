@@ -16,41 +16,14 @@ interface SkillGoal {
   currentXp: number
 }
 
-export function Skills() {
-  const [goals, setGoals] = useState<SkillGoal[]>([])
+export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
+  const [goals, setGoals] = useState<SkillGoal[]>(() => {
+    const saved = localStorage.getItem('skillGoals')
+    return saved ? JSON.parse(saved) : []
+  })
   const [showForm, setShowForm] = useState(false)
   const [selectedSkill, setSelectedSkill] = useState('')
   const [targetLevel, setTargetLevel] = useState('99')
-  const [playerSkills, setPlayerSkills] = useState<Skill[]>([])
-
-  useEffect(() => {
-    // Load player skills from localStorage first
-    const savedSkills = localStorage.getItem('playerSkills')
-    if (savedSkills) {
-      const skills = JSON.parse(savedSkills)
-      setPlayerSkills(skills)
-      
-      // Then load goals and update them with current player data
-      const savedGoals = localStorage.getItem('skillGoals')
-      if (savedGoals) {
-        const loadedGoals = JSON.parse(savedGoals)
-        const updatedGoals = loadedGoals.map((goal: SkillGoal) => {
-          const skill = skills.find((s: Skill) => s.name.toLowerCase() === goal.skillName.toLowerCase())
-          if (skill) {
-            return { ...goal, currentLevel: skill.level, currentXp: skill.xp }
-          }
-          return goal
-        })
-        setGoals(updatedGoals)
-      }
-    } else {
-      // If no player skills, just load goals
-      const savedGoals = localStorage.getItem('skillGoals')
-      if (savedGoals) {
-        setGoals(JSON.parse(savedGoals))
-      }
-    }
-  }, [])
 
   // Save goals to localStorage whenever they change
   useEffect(() => {
@@ -59,20 +32,13 @@ export function Skills() {
     }
   }, [goals])
 
-  // Update goals when player skills change
+  // Sync goals with latest player skills whenever they change
   useEffect(() => {
-    if (playerSkills.length > 0 && goals.length > 0) {
-      setGoals(prevGoals => {
-        const updatedGoals = prevGoals.map(goal => {
-          const skill = playerSkills.find((s: Skill) => s.name.toLowerCase() === goal.skillName.toLowerCase())
-          if (skill) {
-            return { ...goal, currentLevel: skill.level, currentXp: skill.xp }
-          }
-          return goal
-        })
-        return updatedGoals
-      })
-    }
+    if (playerSkills.length === 0) return
+    setGoals(prevGoals => prevGoals.map(goal => {
+      const skill = playerSkills.find(s => s.name.toLowerCase() === goal.skillName.toLowerCase())
+      return skill ? { ...goal, currentLevel: skill.level, currentXp: skill.xp } : goal
+    }))
   }, [playerSkills])
 
   const addGoal = () => {

@@ -12,7 +12,7 @@ interface Skill {
   xp: number
 }
 
-export function PlayerLookup() {
+export function PlayerLookup({ onSkillsLoaded }: { onSkillsLoaded: (skills: Skill[]) => void }) {
   const [playerName, setPlayerName] = useState(() => {
     return localStorage.getItem("playerName") || ""
   })
@@ -42,6 +42,7 @@ export function PlayerLookup() {
       })
       setSkills(result)
       localStorage.setItem("playerSkills", JSON.stringify(result))
+      onSkillsLoaded(result)
     } catch (err) {
       setError(err as string)
     } finally {

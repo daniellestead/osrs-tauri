@@ -2,8 +2,9 @@ import { useState } from "react"
 import { Skills } from "./skills/skills"
 import { Drops } from "./drops/drops"
 import { Button } from "../../components/button"
+import type { Skill } from "../app"
 
-export function NavigationTabs({ tabs }: { tabs: string[] }) {
+export function NavigationTabs({ tabs, skills }: { tabs: string[], skills: Skill[] }) {
     const [activeTab, setActiveTab] = useState<string>('skills')
 
     return (
@@ -24,7 +25,7 @@ export function NavigationTabs({ tabs }: { tabs: string[] }) {
             </nav>
 
             <div>
-                {activeTab === 'skills' && <Skills />}
+                {activeTab === 'skills' && <Skills playerSkills={skills} />}
                 {activeTab === 'drops' && <Drops />}
             </div>
         </div>

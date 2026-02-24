@@ -1,6 +1,6 @@
 # OSRS Tracker
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Version](https://img.shields.io/github/v/release/daniellestead/osrs-tauri)
 
 A desktop application for tracking OSRS player stats, skill goals, and rare drop collections. Built with Tauri, React, and TypeScript.
 
