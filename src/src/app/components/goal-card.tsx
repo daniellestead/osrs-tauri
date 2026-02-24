@@ -1,4 +1,4 @@
-import { Button } from "../../components/button"
+import { Button } from "@heroui/react";
 
 interface GoalCardProps {
   id: string
@@ -50,7 +50,7 @@ export function GoalCard({
           className="w-5 h-5 min-w-0 bg-transparent border-none text-red-400 text-sm p-0 hover:bg-red-400/10"
           onPress={() => onDelete(id)}
         >
-          ×
+          x
         </Button>
       </div>
 

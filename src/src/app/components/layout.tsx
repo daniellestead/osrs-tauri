@@ -1,4 +1,4 @@
-import { Button } from "../../components/button"
+import { Button } from "@heroui/react";
 import type { ReactNode } from "react"
 
 interface PageLayoutProps {

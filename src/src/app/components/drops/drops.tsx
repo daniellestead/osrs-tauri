@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { PageLayout } from '../layout'
 import { Card } from '../../../components/card'
 import { Input } from '../../../components/input'
-import { Button } from '../../../components/button'
+import { Button } from "@heroui/react";
 import { GoalCard } from '../goal-card'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import type { Item } from './types'
@@ -136,10 +136,10 @@ export function Drops() {
                       {loading && <div className="p-3 text-zinc-400 text-sm">Loading...</div>}
                       {error && <div className="p-3 text-red-400 text-sm">{error}</div>}
                       {filteredItems.map((item) => (
-                        <button
+                        <Button
                           key={item.id}
                           className="w-full flex items-center gap-2 p-2 hover:bg-zinc-800 text-left transition-colors"
-                          onClick={() => selectItem(item)}
+                          onPress={() => selectItem(item)}
                           type="button"
                         >
                           <img src={item.icon} alt={item.name} className="w-8 h-8" />
@@ -147,7 +147,7 @@ export function Drops() {
                             <span className="text-white text-sm">{item.name}</span>
                             <span className="text-zinc-400 text-xs">{item.description}</span>
                           </div>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )

@@ -4,7 +4,7 @@ import { GoalCard } from '../goal-card'
 import { Card } from '../../../components/card'
 import { Input } from '../../../components/input'
 import { Select, SelectItem } from '@heroui/react'
-import { Button } from '../../../components/button'
+import { Button } from "@heroui/react";
 import { type Skill, SKILLS, XP_TABLE } from "./types"
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
 

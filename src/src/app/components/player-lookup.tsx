@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { invoke } from "@tauri-apps/api/core"
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { Input } from "../../components/input";
-import { Button } from "../../components/button";
+import { Button } from "@heroui/react";
 import { Error } from "../../components/error";
 import { Card } from "../../components/card";
 
@@ -65,6 +65,7 @@ export function PlayerLookup({ onSkillsLoaded }: { onSkillsLoaded: (skills: Skil
           onPress={lookupPlayer}
           isDisabled={loading}
           isLoading={loading}
+          isIconOnly
         >
           <ArrowPathIcon className="w-5 h-5" />
         </Button>

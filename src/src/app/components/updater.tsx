@@ -2,8 +2,7 @@ import { check, type Update } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { useEffect, useState } from 'react';
 import { getVersion } from '@tauri-apps/api/app';
-import { Button } from '../../components/button'
-import { Progress } from "@heroui/react";
+import { Button, Progress } from "@heroui/react";
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
 type UpdateStatus = 'idle' | 'checking' | 'available' | 'up-to-date' | 'installing' | 'error';
@@ -69,29 +68,19 @@ export function UpdaterFooter() {
   const progressPercent = contentLength > 0 ? Math.round((progress / contentLength) * 100) : 0;
 
   return (
-    <div className="fixed bottom-0 right-0 flex items-center justify-end px-2 py-2 text-gray-600 text-xs gap-3">
+    <div className="fixed bottom-0 right-0 max-h-8 flex items-center justify-end px-2 py-2 text-gray-600 text-xs gap-3">
       {version && <span>v{version}</span>}
 
       {status === 'up-to-date' && (
-        <>
-        <span>Up to date!</span>
-        <Progress
-						color="success"
-						size="md"
-						value={progressPercent}
-						showValueLabel
-						classNames={{
-							label: "text-small",
-						}}
-					></Progress>
-        </>
+        <span className='w-16'>Up to date!</span>
       )}
 
       {(status === 'idle' || status === 'checking' || status === 'up-to-date') && (
           <Button
-            className="h-5 text-white bg-gray-500 hover:bg-gray-700"
+            className="h-5 w-5 text-white bg-gray-500 hover:bg-gray-700"
             onPress={checkForUpdates}
             isLoading={status === 'checking'}
+            isIconOnly
           >
             <ArrowPathIcon className="w-3 h-3" />
           </Button>
@@ -132,9 +121,8 @@ export function UpdaterFooter() {
 						color="success"
 						size="md"
 						value={progressPercent}
-						showValueLabel
 						classNames={{
-							label: "text-small",
+							base: "w-32",
 						}}
 					></Progress>
         </>

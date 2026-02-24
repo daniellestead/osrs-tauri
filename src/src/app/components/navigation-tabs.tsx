@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Skills } from "./skills/skills"
 import { Drops } from "./drops/drops"
-import { Button } from "../../components/button"
+import { Button } from "@heroui/react";
 import type { Skill } from "../app"
 
 export function NavigationTabs({ tabs, skills }: { tabs: string[], skills: Skill[] }) {
