@@ -58,17 +58,10 @@ cargo tauri build
 
 Artifacts will be in `src-tauri/target/release/bundle/`
 
-### Cross-Platform Builds
-
-The project uses GitHub Actions to build for all platforms:
-
-1. Update the version in the tauri.conf.json.
-
-2. Push a version tag:
+### Release
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+make release v=0.3.0
 ```
 
 GitHub Actions will automatically build:
@@ -76,7 +69,7 @@ GitHub Actions will automatically build:
 - Windows installers (.exe, .msi)
 - macOS bundles (.dmg, .app)
 
-1. Releases are published at: `https://github.com/daniellestead/osrs-tauri/releases`
+Releases are published at: `https://github.com/daniellestead/osrs-tauri/releases`
 
 ## API
 
