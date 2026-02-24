@@ -86,7 +86,7 @@ export function UpdaterFooter() {
           </Button>
       )}
 
-      {status === 'available' && update && (
+      {(status === 'available' && update) && (
         <>
           <span>Update {update.version} available</span>
           <Button
