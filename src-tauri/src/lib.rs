@@ -93,6 +93,7 @@ async fn search_items(letter: String) -> Result<Vec<Item>, String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![lookup_player, search_items])
         .setup(|app| {
             if cfg!(debug_assertions) {

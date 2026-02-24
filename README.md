@@ -62,7 +62,9 @@ Artifacts will be in `src-tauri/target/release/bundle/`
 
 The project uses GitHub Actions to build for all platforms:
 
-1. Push a version tag:
+1. Update the version in the tauri.conf.json.
+
+2. Push a version tag:
 
 ```bash
 git tag v1.0.0
@@ -86,5 +88,6 @@ The app uses the official [Old School RuneScape Hiscores API](https://secure.run
 
 ## Features to add
 
-- Update version []
 - Group tasks/drops []
+- Add task/drop dependencies []
+- Add tests and better error handling []
