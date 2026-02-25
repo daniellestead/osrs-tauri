@@ -1,4 +1,6 @@
 import { Button } from "@heroui/react";
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+import type { GoalSummary } from "../types";
 
 interface GoalCardProps {
   id: string
@@ -15,6 +17,8 @@ interface GoalCardProps {
   type?: 'skill' | 'drop'
   onIncrement?: (id: string) => void
   onDecrement?: (id: string) => void
+  isBlocked?: boolean
+  blockingDependencies?: GoalSummary[]
 }
 
 export function GoalCard({
@@ -32,13 +36,17 @@ export function GoalCard({
   type = 'skill',
   onIncrement,
   onDecrement,
+  isBlocked,
+  blockingDependencies,
 }: GoalCardProps) {
   return (
     <div
       className={`bg-zinc-900 border rounded-lg p-3 transition-all w-60 ${
         isComplete
           ? 'border-purple-500 bg-purple-500/5'
-          : 'border-zinc-700 hover:border-purple-500/50'
+          : isBlocked
+            ? 'border-amber-500/50 opacity-60'
+            : 'border-zinc-700 hover:border-purple-500/50'
       }`}
     >
       <div className="flex justify-between items-center mb-3">
@@ -53,6 +61,15 @@ export function GoalCard({
           x
         </Button>
       </div>
+
+      {isBlocked && blockingDependencies && blockingDependencies.length > 0 && (
+        <div className="flex items-center gap-1 mb-2 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400">
+          <LockClosedIcon className="w-3 h-3 flex-shrink-0" />
+          <span className="truncate">
+            Blocked by: {blockingDependencies.map(d => d.label).join(', ')}
+          </span>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3 text-lg font-semibold justify-center">
@@ -81,13 +98,14 @@ export function GoalCard({
               <Button
                 className="w-8 h-8 min-w-0 bg-zinc-800 border border-zinc-700 text-white text-lg cursor-pointer hover:bg-zinc-700"
                 onPress={() => onDecrement?.(id)}
-                isDisabled={currentValue <= 0}
+                isDisabled={currentValue <= 0 || isBlocked}
               >
                 -
               </Button>
               <Button
                 className="w-8 h-8 min-w-0  bg-purple-500 text-white text-lg cursor-pointer hover:bg-purple-600"
                 onPress={() => onIncrement?.(id)}
+                isDisabled={isBlocked}
               >
                 +
               </Button>

@@ -7,6 +7,10 @@ import { Select, SelectItem } from '@heroui/react'
 import { Button } from "@heroui/react";
 import { type Skill, SKILLS, XP_TABLE } from "./types"
 import { PlusCircleIcon } from "@heroicons/react/24/outline"
+import type { GoalDependency } from "../../types"
+import { DependencyPicker } from "../dependency-picker"
+import { useAllGoals } from "../../hooks/use-all-goals"
+import { notifyGoalsUpdated } from "../../hooks/notify-goals-updated"
 
 interface SkillGoal {
   id: string
@@ -14,6 +18,7 @@ interface SkillGoal {
   targetLevel: number
   currentLevel: number
   currentXp: number
+  dependencies?: GoalDependency[]
 }
 
 export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
@@ -24,11 +29,14 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
   const [showForm, setShowForm] = useState(false)
   const [selectedSkill, setSelectedSkill] = useState('')
   const [targetLevel, setTargetLevel] = useState('99')
+  const [selectedDeps, setSelectedDeps] = useState<GoalDependency[]>([])
+  const { isGoalBlocked, getBlockingDependencies } = useAllGoals()
 
   // Save goals to localStorage whenever they change
   useEffect(() => {
     if (goals.length > 0) {
       localStorage.setItem('skillGoals', JSON.stringify(goals))
+      notifyGoalsUpdated()
     }
   }, [goals])
 
@@ -64,13 +72,15 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
       skillName: selectedSkill,
       targetLevel: targetLevelNum,
       currentLevel,
-      currentXp
+      currentXp,
+      dependencies: selectedDeps.length > 0 ? selectedDeps : undefined,
     }
 
     setGoals([...goals, newGoal])
     setShowForm(false)
     setSelectedSkill('')
     setTargetLevel('99')
+    setSelectedDeps([])
   }
 
   const deleteGoal = (id: string) => {
@@ -88,7 +98,7 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
   }
 
   return (
-    <PageLayout 
+    <PageLayout
       headerButton={{
         children: showForm ? 'Cancel' : <PlusCircleIcon className="w-5 h-5" />,
         onClick: () => setShowForm(!showForm),
@@ -96,8 +106,9 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
       }}
     >
       {showForm && (
-        <Card className="flex flex-row items-end gap-3">
-            <Select 
+        <Card className="flex flex-col gap-3">
+          <div className="flex flex-row items-end gap-3">
+            <Select
               selectionMode="single"
               selectedKeys={selectedSkill ? [selectedSkill] : []}
               onSelectionChange={(keys) => {
@@ -116,19 +127,19 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
                 return (
                   <div className="flex items-center gap-2">
                     {items.map((item) => (
-                      <Skill skill={item.textValue ? item.textValue : ''} />
+                      <SkillRow skill={item.textValue ? item.textValue : ''} />
                     ))}
                   </div>
                 );
               }}
-              
+
             >
               {SKILLS.map(skill => (
-                <SelectItem 
-                  key={skill} 
+                <SelectItem
+                  key={skill}
                   textValue={skill}
                 >
-                  <Skill skill={skill} />
+                  <SkillRow skill={skill} />
                 </SelectItem>
               ))}
             </Select>
@@ -143,12 +154,18 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
               className="w-32"
             />
 
-            <Button 
+            <Button
               onPress={addGoal}
               className="text-white bg-purple-500 hover:bg-purple-700 h-10"
             >
               Add goal
             </Button>
+          </div>
+
+          <DependencyPicker
+            selectedDependencies={selectedDeps}
+            onChange={setSelectedDeps}
+          />
         </Card>
       )}
 
@@ -157,6 +174,8 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
             const progress = calculateProgress(goal.currentXp, goal.targetLevel)
             const xpRemaining = getXpRemaining(goal.currentXp, goal.targetLevel)
             const isComplete = goal.currentLevel >= goal.targetLevel
+            const blocked = isGoalBlocked(goal.dependencies)
+            const blockingDeps = getBlockingDependencies(goal.dependencies)
 
             return (
               <GoalCard
@@ -170,6 +189,8 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
                 remainingText={`${xpRemaining.toLocaleString()} XP remaining`}
                 isComplete={isComplete}
                 onDelete={deleteGoal}
+                isBlocked={blocked}
+                blockingDependencies={blockingDeps}
               />
             )
         })}
@@ -178,11 +199,11 @@ export function Skills({ playerSkills }: { playerSkills: Skill[] }) {
   )
 }
 
-function Skill({ skill }: { skill: string }) {
+function SkillRow({ skill }: { skill: string }) {
   return (
     <div key={skill} className="flex items-center gap-2">
-      <img 
-        src={`/skills/${skill?.toLowerCase()}.png`} 
+      <img
+        src={`/skills/${skill?.toLowerCase()}.png`}
         alt={skill || ''}
         className="w-5 h-5"
       />

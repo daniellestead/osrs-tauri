@@ -7,6 +7,10 @@ import { GoalCard } from '../goal-card'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import type { Item } from './types'
 import { UseItemSearch } from './use-item-search'
+import type { GoalDependency } from '../../types'
+import { DependencyPicker } from '../dependency-picker'
+import { useAllGoals } from '../../hooks/use-all-goals'
+import { notifyGoalsUpdated } from '../../hooks/notify-goals-updated'
 
 interface DropGoal {
   id: string
@@ -14,6 +18,7 @@ interface DropGoal {
   targetDrops: number
   currentDrops: number
   itemIcon?: string
+  dependencies?: GoalDependency[]
 }
 
 export function Drops() {
@@ -23,7 +28,9 @@ export function Drops() {
   const [targetDrops, setTargetDrops] = useState('1')
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [showResults, setShowResults] = useState(false)
+  const [selectedDeps, setSelectedDeps] = useState<GoalDependency[]>([])
   const { items, loading, error, searchItems } = UseItemSearch()
+  const { isGoalBlocked, getBlockingDependencies } = useAllGoals()
 
   useEffect(() => {
     const savedGoals = localStorage.getItem('dropGoals')
@@ -35,6 +42,7 @@ export function Drops() {
   useEffect(() => {
     if (goals.length > 0) {
       localStorage.setItem('dropGoals', JSON.stringify(goals))
+      notifyGoalsUpdated()
     }
   }, [goals])
 
@@ -47,6 +55,7 @@ export function Drops() {
       targetDrops: Number.parseInt(targetDrops) || 1,
       currentDrops: 0,
       itemIcon: selectedItem?.icon,
+      dependencies: selectedDeps.length > 0 ? selectedDeps : undefined,
     }
 
     setGoals([...goals, newGoal])
@@ -55,12 +64,13 @@ export function Drops() {
     setSelectedItem(null)
     setShowResults(false)
     setShowForm(false)
+    setSelectedDeps([])
   }
 
   const handleItemSearch = (value: string) => {
     setItemName(value)
     setSelectedItem(null)
-    
+
     if (value.length >= 1) {
       searchItems(value.toLowerCase())
       setShowResults(true)
@@ -125,12 +135,12 @@ export function Drops() {
                   value={itemName}
                   onChange={(e) => handleItemSearch(e.target.value)}
                 />
-                
+
                 {showResults && (() => {
-                  const filteredItems = items.filter(item => 
+                  const filteredItems = items.filter(item =>
                     item.name.toLowerCase().includes(itemName.toLowerCase())
                   )
-                  
+
                   return filteredItems.length > 0 && (
                     <div className="absolute z-50 w-full mt-1 bg-zinc-900 border border-zinc-700 rounded-lg max-h-60 overflow-y-auto shadow-xl">
                       {loading && <div className="p-3 text-zinc-400 text-sm">Loading...</div>}
@@ -171,6 +181,11 @@ export function Drops() {
               Add goal
             </Button>
           </div>
+
+          <DependencyPicker
+            selectedDependencies={selectedDeps}
+            onChange={setSelectedDeps}
+          />
           </Card>
         </div>
       )}
@@ -179,6 +194,8 @@ export function Drops() {
         {goals.map((goal) => {
           const progress = calculateProgress(goal.currentDrops, goal.targetDrops)
           const isComplete = goal.currentDrops >= goal.targetDrops
+          const blocked = isGoalBlocked(goal.dependencies)
+          const blockingDeps = getBlockingDependencies(goal.dependencies)
 
           return (
             <GoalCard
@@ -195,6 +212,8 @@ export function Drops() {
               type="drop"
               onIncrement={incrementDrops}
               onDecrement={decrementDrops}
+              isBlocked={blocked}
+              blockingDependencies={blockingDeps}
             />
           )
         })}
