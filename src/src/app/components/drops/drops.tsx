@@ -148,12 +148,11 @@ export function Drops() {
                       {filteredItems.map((item) => (
                         <Button
                           key={item.id}
-                          className="w-full flex items-center gap-2 p-2 hover:bg-zinc-800 text-left transition-colors"
+                          className="w-full flex justify-start items-center gap-2 p-2 bg-zinc-900 hover:bg-zinc-800 text-left transition-colors"
                           onPress={() => selectItem(item)}
-                          type="button"
                         >
                           <img src={item.icon} alt={item.name} className="w-8 h-8" />
-                          <div className="flex flex-col">
+                          <div className="flex flex-col justify-start">
                             <span className="text-white text-sm">{item.name}</span>
                             <span className="text-zinc-400 text-xs">{item.description}</span>
                           </div>

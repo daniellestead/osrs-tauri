@@ -1,5 +1,5 @@
 import { Button } from "@heroui/react";
-import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { LockClosedIcon, CheckIcon } from "@heroicons/react/24/outline";
 import type { GoalSummary } from "../types";
 
 interface GoalCardProps {
@@ -14,9 +14,10 @@ interface GoalCardProps {
   remainingText: string
   isComplete: boolean
   onDelete: (id: string) => void
-  type?: 'skill' | 'drop'
+  type?: 'skill' | 'drop' | 'other'
   onIncrement?: (id: string) => void
   onDecrement?: (id: string) => void
+  onToggleComplete?: (id: string) => void
   isBlocked?: boolean
   blockingDependencies?: GoalSummary[]
 }
@@ -36,6 +37,7 @@ export function GoalCard({
   type = 'skill',
   onIncrement,
   onDecrement,
+  onToggleComplete,
   isBlocked,
   blockingDependencies,
 }: GoalCardProps) {
@@ -72,14 +74,21 @@ export function GoalCard({
       )}
 
       <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 text-lg font-semibold justify-center">
-          <span className="text-zinc-400">{currentLabel || currentValue}</span>
-          <span className="text-purple-500">→</span>
-          <span className="text-purple-500">{targetLabel || targetValue}</span>
-        </div>
+        {type !== 'other' && (
+          <div className="flex items-center gap-3 text-lg font-semibold justify-center">
+            <span className="text-zinc-400">{currentLabel || currentValue}</span>
+            <span className="text-purple-500">→</span>
+            <span className="text-purple-500">{targetLabel || targetValue}</span>
+          </div>
+        )}
 
         {isComplete ? (
-          <div className="text-center text-purple-500 text-sm font-semibold p-2 bg-purple-500/10 rounded border border-purple-500/20">
+          <div
+            className={`text-center text-purple-500 text-sm font-semibold p-2 bg-purple-500/10 rounded border border-purple-500/20 ${
+              type === 'other' ? 'cursor-pointer hover:bg-purple-500/20' : ''
+            }`}
+            onClick={type === 'other' ? () => onToggleComplete?.(id) : undefined}
+          >
             Complete!
           </div>
         ) : type === 'skill' ? (
@@ -92,7 +101,7 @@ export function GoalCard({
             </div>
             <div className="text-center text-zinc-400 text-xs">{remainingText}</div>
           </>
-        ) : (
+        ) : type === 'drop' ? (
           <>
             <div className="flex items-center justify-center gap-2">
               <Button
@@ -112,6 +121,15 @@ export function GoalCard({
             </div>
             <div className="text-center text-zinc-400 text-xs">{remainingText}</div>
           </>
+        ) : (
+          <Button
+            className="w-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-sm hover:bg-zinc-700 hover:text-white"
+            onPress={() => onToggleComplete?.(id)}
+            isDisabled={isBlocked}
+          >
+            <CheckIcon className="w-4 h-4" />
+            Mark complete
+          </Button>
         )}
       </div>
     </div>

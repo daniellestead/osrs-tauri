@@ -3,7 +3,7 @@ import { PlayerLookup } from './components/player-lookup'
 import { NavigationTabs } from './components/navigation-tabs'
 import { UpdaterFooter } from './components/updater'
 
-const TABS = ['skills', 'drops']
+const TABS = ['skills', 'drops', 'other']
 
 export interface Skill {
   name: string

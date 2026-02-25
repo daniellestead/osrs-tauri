@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Skills } from "./skills/skills"
 import { Drops } from "./drops/drops"
+import { Other } from "./other/other"
 import { Button } from "@heroui/react";
 import type { Skill } from "../app"
 
@@ -27,6 +28,7 @@ export function NavigationTabs({ tabs, skills }: { tabs: string[], skills: Skill
             <div>
                 {activeTab === 'skills' && <Skills playerSkills={skills} />}
                 {activeTab === 'drops' && <Drops />}
+                {activeTab === 'other' && <Other />}
             </div>
         </div>
     )
