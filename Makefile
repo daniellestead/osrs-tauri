@@ -16,5 +16,5 @@ endif
 	-git push origin --delete v$(v) 2>/dev/null
 	-git tag -d v$(v) 2>/dev/null
 	git tag v$(v)
-	git push origin v$(v)
+	git push origin main v$(v)
 	@echo "Pushed v$(v) — GitHub Actions will build the release draft."
